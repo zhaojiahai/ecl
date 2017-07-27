@@ -50,7 +50,7 @@ void Ekf::fuseVelPosHeight()
 	bool innov_check_pass_map[6] = {}; // true when innovations consistency checks pass for [VN,VE,VD,PN,PE,PD] observations
 	float R[6] = {}; // observation variances for [VN,VE,VD,PN,PE,PD]
 	float gate_size[6] = {}; // innovation consistency check gate sizes for [VN,VE,VD,PN,PE,PD] observations
-	float Kfusion[24] = {}; // Kalman gain vector for any single observation - sequential fusion is used
+	float Kfusion[_k_num_states] = {}; // Kalman gain vector for any single observation - sequential fusion is used
 
 	// calculate innovations, innovations gate sizes and observation variances
 	if (_fuse_hor_vel) {

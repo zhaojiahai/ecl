@@ -330,6 +330,7 @@ struct stateSample {
 	Vector3f    mag_I;	///< NED earth magnetic field in gauss
 	Vector3f    mag_B;	///< magnetometer bias estimate in body frame in gauss
 	Vector2f    wind_vel;	///< wind velocity in m/s
+	Vector3f    body_vel;	///> velocity in the body frame of reference
 };
 
 union fault_status_u {
@@ -414,6 +415,7 @@ union filter_control_status_u {
 		uint32_t update_mag_states_only   : 1; ///< 16 - true when only the magnetometer states are updated by the magnetometer
 		uint32_t fixed_wing  : 1; ///< 17 - true when the vehicle is operating as a fixed wing vehicle
 		uint32_t mag_fault   : 1; ///< 18 - true when the magnetomer has been declared faulty and is no longer being used
+		uint32_t dpos_body   : 1; ///< 19 - true when body frame delta position observations are being fused
 	} flags;
 	uint32_t value;
 };

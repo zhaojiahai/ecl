@@ -208,7 +208,7 @@ public:
 
 private:
 
-	static constexpr uint8_t _k_num_states{24};		///< number of EKF states
+	static constexpr uint8_t _k_num_states{27};		///< number of EKF states
 	static constexpr float _k_earth_rate{0.000072921f};	///< earth spin rate (rad/sec)
 	static constexpr float _gravity_mss{9.80665f};		///< average earth gravity at sea level (m/sec**2)
 

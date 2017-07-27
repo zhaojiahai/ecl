@@ -56,9 +56,9 @@ void Ekf::fuseAirspeed()
 	float R_TAS = sq(math::constrain(_params.eas_noise, 0.5f, 5.0f) * math::constrain(_airspeed_sample_delayed.eas2tas, 0.9f,
 			 10.0f)); // Variance for true airspeed measurement - (m/sec)^2
 	float SH_TAS[3] = {}; // Varialbe used to optimise calculations of measurement jacobian
-	float H_TAS[24] = {}; // Observation Jacobian
+	float H_TAS[_k_num_states] = {}; // Observation Jacobian
 	float SK_TAS[2] = {}; // Varialbe used to optimise calculations of the Kalman gain vector
-	float Kfusion[24] = {}; // Kalman gain vector
+	float Kfusion[_k_num_states] = {}; // Kalman gain vector
 
 	// Copy required states to local variable names
 	vn = _state.vel(0);

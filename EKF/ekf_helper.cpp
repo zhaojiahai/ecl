@@ -1102,7 +1102,7 @@ void Ekf::zeroCols(float (&cov_mat)[_k_num_states][_k_num_states], uint8_t first
 {
 	uint8_t row;
 
-	for (row = 0; row <= 23; row++) {
+	for (row = 0; row < _k_num_states; row++) {
 		memset(&cov_mat[row][first], 0, sizeof(cov_mat[0][0]) * (1 + last - first));
 	}
 }

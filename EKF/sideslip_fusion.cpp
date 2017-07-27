@@ -46,9 +46,9 @@
 void Ekf::fuseSideslip()
 { 
 	float SH_BETA[13] = {}; // Varialbe used to optimise calculations of measurement jacobian
-	float H_BETA[24] = {}; // Observation Jacobian
+	float H_BETA[_k_num_states] = {}; // Observation Jacobian
 	float SK_BETA[8] = {}; // Varialbe used to optimise calculations of the Kalman gain vector
-	float Kfusion[24] = {}; // Kalman gain vector
+	float Kfusion[_k_num_states] = {}; // Kalman gain vector
     float R_BETA = _params.beta_noise;
 
 	// get latest estimated orientation

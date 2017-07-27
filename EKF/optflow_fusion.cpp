@@ -62,8 +62,8 @@ void Ekf::fuseOptFlow()
 	// calculate the optical flow observation variance
 	float R_LOS = calcOptFlowMeasVar();
 
-	float H_LOS[2][24] = {}; // Optical flow observation Jacobians
-	float Kfusion[24][2] = {}; // Optical flow Kalman gains
+	float H_LOS[2][_k_num_states] = {}; // Optical flow observation Jacobians
+	float Kfusion[_k_num_states][2] = {}; // Optical flow Kalman gains
 
 	// constrain height above ground to be above minimum height when sitting on ground
 	float heightAboveGndEst = math::max((_terrain_vpos - _state.pos(2)), gndclearance);
@@ -422,7 +422,7 @@ void Ekf::fuseOptFlow()
 	for (uint8_t obs_index = 0; obs_index <= 1; obs_index++) {
 
 		// copy the Kalman gain vector for the axis we are fusing
-		float gain[24];
+		float gain[_k_num_states];
 
 		for (unsigned row = 0; row <= 23; row++) {
 			gain[row] = Kfusion[row][obs_index];
