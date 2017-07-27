@@ -249,6 +249,15 @@ void Ekf::fuseOptFlow()
 			Kfusion[22][0] = t78*(P[22][0]*t2*t5-P[22][4]*t2*t7+P[22][1]*t2*t15+P[22][6]*t2*t10+P[22][2]*t2*t19-P[22][3]*t2*t22+P[22][5]*t2*t27);
 			Kfusion[23][0] = t78*(P[23][0]*t2*t5-P[23][4]*t2*t7+P[23][1]*t2*t15+P[23][6]*t2*t10+P[23][2]*t2*t19-P[23][3]*t2*t22+P[23][5]*t2*t27);
 
+			// Only update delta position states if doing body frame odometry fusion
+			if (_control_status.flags.dpos_body) {
+				Kfusion[24][0] = t78*(P[24][0]*t2*t5-P[24][4]*t2*t7+P[24][1]*t2*t15+P[24][6]*t2*t10+P[24][2]*t2*t19-P[24][3]*t2*t22+P[24][5]*t2*t27);
+				Kfusion[25][0] = t78*(P[25][0]*t2*t5-P[25][4]*t2*t7+P[25][1]*t2*t15+P[25][6]*t2*t10+P[25][2]*t2*t19-P[25][3]*t2*t22+P[25][5]*t2*t27);
+				Kfusion[26][0] = t78*(P[26][0]*t2*t5-P[26][4]*t2*t7+P[26][1]*t2*t15+P[26][6]*t2*t10+P[26][2]*t2*t19-P[26][3]*t2*t22+P[26][5]*t2*t27);
+			} else {
+				Kfusion[26][0] = Kfusion[25][0] = Kfusion[24][0] = 0.0f;
+			}
+
 			// run innovation consistency checks
 			optflow_test_ratio[0] = sq(_flow_innov[0]) / (sq(math::max(_params.flow_innov_gate, 1.0f)) * _flow_innov_var[0]);
 
@@ -393,6 +402,15 @@ void Ekf::fuseOptFlow()
 			Kfusion[21][1] = -t78*(P[21][0]*t2*t5+P[21][5]*t2*t8-P[21][6]*t2*t10+P[21][1]*t2*t16-P[21][2]*t2*t19+P[21][3]*t2*t22+P[21][4]*t2*t27);
 			Kfusion[22][1] = -t78*(P[22][0]*t2*t5+P[22][5]*t2*t8-P[22][6]*t2*t10+P[22][1]*t2*t16-P[22][2]*t2*t19+P[22][3]*t2*t22+P[22][4]*t2*t27);
 			Kfusion[23][1] = -t78*(P[23][0]*t2*t5+P[23][5]*t2*t8-P[23][6]*t2*t10+P[23][1]*t2*t16-P[23][2]*t2*t19+P[23][3]*t2*t22+P[23][4]*t2*t27);
+
+			// Only update delta position states if doing body frame odometry fusion
+			if (_control_status.flags.dpos_body) {
+				Kfusion[24][1] = -t78*(P[24][0]*t2*t5+P[24][5]*t2*t8-P[24][6]*t2*t10+P[24][1]*t2*t16-P[24][2]*t2*t19+P[24][3]*t2*t22+P[24][4]*t2*t27);
+				Kfusion[25][1] = -t78*(P[25][0]*t2*t5+P[25][5]*t2*t8-P[25][6]*t2*t10+P[25][1]*t2*t16-P[25][2]*t2*t19+P[25][3]*t2*t22+P[25][4]*t2*t27);
+				Kfusion[26][1] = -t78*(P[26][0]*t2*t5+P[26][5]*t2*t8-P[26][6]*t2*t10+P[26][1]*t2*t16-P[26][2]*t2*t19+P[26][3]*t2*t22+P[26][4]*t2*t27);
+			} else {
+				Kfusion[26][1] = Kfusion[25][1] = Kfusion[24][1] = 0.0f;
+			}
 
 			// run innovation consistency check
 			optflow_test_ratio[1] = sq(_flow_innov[1]) / (sq(math::max(_params.flow_innov_gate, 1.0f)) * _flow_innov_var[1]);
