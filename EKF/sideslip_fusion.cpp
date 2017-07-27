@@ -172,6 +172,15 @@ void Ekf::fuseSideslip()
                 Kfusion[14] = SK_BETA[0]*(P[14][0]*SK_BETA[5] + P[14][1]*SK_BETA[4] - P[14][4]*SK_BETA[1] + P[14][5]*SK_BETA[2] + P[14][2]*SK_BETA[6] + P[14][6]*SK_BETA[3] - P[14][3]*SK_BETA[7] + P[14][22]*SK_BETA[1] - P[14][23]*SK_BETA[2]);
                 Kfusion[15] = SK_BETA[0]*(P[15][0]*SK_BETA[5] + P[15][1]*SK_BETA[4] - P[15][4]*SK_BETA[1] + P[15][5]*SK_BETA[2] + P[15][2]*SK_BETA[6] + P[15][6]*SK_BETA[3] - P[15][3]*SK_BETA[7] + P[15][22]*SK_BETA[1] - P[15][23]*SK_BETA[2]);
 
+		// Only update delta position states if doing body frame odometry fusion
+		if (_control_status.flags.dpos_body) {
+			Kfusion[24] = SK_BETA[0]*(P[24][0]*SK_BETA[5] + P[24][1]*SK_BETA[4] - P[24][4]*SK_BETA[1] + P[24][5]*SK_BETA[2] + P[24][2]*SK_BETA[6] + P[24][6]*SK_BETA[3] - P[24][3]*SK_BETA[7] + P[24][22]*SK_BETA[1] - P[24][23]*SK_BETA[2]);
+			Kfusion[25] = SK_BETA[0]*(P[25][0]*SK_BETA[5] + P[25][1]*SK_BETA[4] - P[25][4]*SK_BETA[1] + P[25][5]*SK_BETA[2] + P[25][2]*SK_BETA[6] + P[25][6]*SK_BETA[3] - P[25][3]*SK_BETA[7] + P[25][22]*SK_BETA[1] - P[25][23]*SK_BETA[2]);
+			Kfusion[26] = SK_BETA[0]*(P[26][0]*SK_BETA[5] + P[26][1]*SK_BETA[4] - P[26][4]*SK_BETA[1] + P[26][5]*SK_BETA[2] + P[26][2]*SK_BETA[6] + P[26][6]*SK_BETA[3] - P[26][3]*SK_BETA[7] + P[26][22]*SK_BETA[1] - P[26][23]*SK_BETA[2]);
+		} else {
+			Kfusion[26] = Kfusion[25] = Kfusion[24] = 0.0f;
+		}
+
                 // Only update the magnetometer states if we are airborne and using 3D mag fusion
                 if (_control_status.flags.mag_3D && _control_status.flags.in_air) {
                         Kfusion[16] = SK_BETA[0]*(P[16][0]*SK_BETA[5] + P[16][1]*SK_BETA[4] - P[16][4]*SK_BETA[1] + P[16][5]*SK_BETA[2] + P[16][2]*SK_BETA[6] + P[16][6]*SK_BETA[3] - P[16][3]*SK_BETA[7] + P[16][22]*SK_BETA[1] - P[16][23]*SK_BETA[2]);
