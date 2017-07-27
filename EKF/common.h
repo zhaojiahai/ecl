@@ -156,6 +156,13 @@ struct dragSample {
 	uint64_t time_us;	///< timestamp of the measurement (uSec)
 };
 
+struct bodyDelPosSample {
+	Vector3f delPos;	///< measured change in XYZ position measured in the body frame from the last measurement (m)
+	Vector3f delPosErr;	///< XYZ 1-Sigma accuracy of the delPos measurement (m)
+	uint32_t obsCounter;	///< Counter that increments by 1 for each measurement frame - used to detect lost data
+	uint64_t time_us;	///< timestamp of the measurement (uSec)
+};
+
 // Integer definitions for vdist_sensor_type
 #define VDIST_SENSOR_BARO  0	///< Use baro height
 #define VDIST_SENSOR_GPS   1	///< Use GPS height
@@ -315,6 +322,9 @@ struct parameters {
 	float bcoef_x{25.0f};			///< ballistic coefficient along the X-axis (kg/m**2)
 	float bcoef_y{25.0f};			///< ballistic coefficient along the Y-axis (kg/m**2)
 
+	// fusion of body frame delta position measurements
+	float del_pos_innov_gate{5.0f};		///< body frame delta position innovation consistency gate size (STD)
+
 	// control of accel error detection and mitigation (IMU clipping)
 	float vert_innov_test_lim{4.5f};	///< Number of standard deviations allowed before the combined vertical velocity and position test is declared as failed
 	int bad_acc_reset_delay_us{500000};	///< Continuous time that the vertical position and velocity innovation test must fail before the states are reset (uSec)
@@ -351,8 +361,11 @@ union fault_status_u {
 		bool bad_pos_E: 1;	///< 13 - true if fusion of the East position has encountered a numerical error
 		bool bad_pos_D: 1;	///< 14 - true if fusion of the Down position has encountered a numerical error
 		bool bad_acc_bias: 1;	///< 15 - true if bad delta velocity bias estimates have been detected
+		bool bad_pos_X: 1;	///< 16 - true if fusion of the X delta position has encountered a numerical error
+		bool bad_pos_Y: 1;	///< 17 - true if fusion of the Y delta position has encountered a numerical error
+		bool bad_pos_Z: 1;	///< 18 - true if fusion of the Z delta position has encountered a numerical error
 	} flags;
-	uint16_t value;
+	uint32_t value;
 
 };
 

@@ -330,3 +330,114 @@ void Ekf::fuseVelPosHeight()
 		}
 	}
 }
+
+void Ekf::fuseBodyDelPos()
+{
+	float R[3] = {}; // observation variances for [Z,Y,Z] (m**2)
+	float Kfusion[_k_num_states] = {}; // Kalman gain vector for any single observation - sequential fusion is used
+
+	bool check_pass = true;
+	for (unsigned obs_index = 0; obs_index < 3; obs_index++) {
+		// get the observation variance
+		R[obs_index] = sq(fmaxf(_body_del_pos_sample_delayed.delPosErr(obs_index), 0.01f));
+
+		// get the innovation
+		_vel_pos_innov[obs_index] = _state.dpos_body(obs_index) - _body_del_pos_sample_delayed.delPos(obs_index);
+
+		// reset the odometry state estimate
+		_state.dpos_body.zero();
+
+		// Check that data has not been lost - if it has then we cannot use this measurement
+		if ((_body_del_pos_sample_delayed.obsCounter - _del_pos_counter) != 1 ) {
+			_del_pos_counter = _body_del_pos_sample_delayed.obsCounter;
+			return;
+		}
+		_del_pos_counter = _body_del_pos_sample_delayed.obsCounter;
+
+		// compute the innovation variance SK = HPH + R
+		unsigned state_index = obs_index + 24;	// we start with dPosX and this is the 24. state
+		_del_pos_innov_var[obs_index] = P[state_index][state_index] + R[obs_index];
+
+		// Compute the ratio of innovation to gate size
+		_del_pos_test_ratio[obs_index] = sq(_del_pos_innov[obs_index]) / (sq(_params.del_pos_innov_gate) * _del_pos_innov_var[obs_index]);
+
+		if (_del_pos_test_ratio[obs_index] > 1.0f) {
+			check_pass = false;
+		}
+
+	}
+
+	if (!check_pass) {
+		return;
+	}
+
+	for (unsigned obs_index = 0; obs_index < 3; obs_index++) {
+
+		unsigned state_index = obs_index + 24;	// we start with delPosX and this is the 24. state
+
+		// calculate kalman gain K = PHS, where S = 1/innovation variance
+		for (int row = 0; row < _k_num_states; row++) {
+			Kfusion[row] = P[row][state_index] / _del_pos_innov_var[obs_index];
+		}
+
+		// update covarinace matrix via Pnew = (I - KH)P
+		float KHP[_k_num_states][_k_num_states];
+		for (unsigned row = 0; row < _k_num_states; row++) {
+			for (unsigned column = 0; column < _k_num_states; column++) {
+				KHP[row][column] = Kfusion[row] * P[state_index][column];
+			}
+		}
+
+		// if the covariance correction will result in a negative variance, then
+		// the covariance marix is unhealthy and must be corrected
+		bool healthy = true;
+		for (int i = 0; i < _k_num_states; i++) {
+			if (P[i][i] < KHP[i][i]) {
+				// zero rows and columns
+				zeroRows(P,i,i);
+				zeroCols(P,i,i);
+
+				//flag as unhealthy
+				healthy = false;
+
+				// update individual measurement health status
+				if (obs_index == 0) {
+					_fault_status.flags.bad_pos_X = true;
+				} else if (obs_index == 1) {
+					_fault_status.flags.bad_pos_Y = true;
+				} else if (obs_index == 2) {
+					_fault_status.flags.bad_pos_Z = true;
+				}
+			} else {
+				// update individual measurement health status
+				if (obs_index == 0) {
+					_fault_status.flags.bad_pos_X = false;
+				} else if (obs_index == 1) {
+					_fault_status.flags.bad_pos_Y = false;
+				} else if (obs_index == 2) {
+					_fault_status.flags.bad_pos_Z = false;
+				}
+			}
+		}
+
+		// only apply covariance and state corrrections if healthy
+		if (healthy) {
+			// apply the covariance corrections
+			for (unsigned row = 0; row < _k_num_states; row++) {
+				for (unsigned column = 0; column < _k_num_states; column++) {
+					P[row][column] = P[row][column] - KHP[row][column];
+				}
+			}
+
+			// correct the covariance marix for gross errors
+			fixCovarianceErrors();
+
+			// apply the state corrections
+			fuse(Kfusion, _vel_pos_innov[obs_index]);
+
+			// reset covariances for delta position states
+			zeroCols(P,24,26);
+			zeroRows(P,24,26);
+		}
+	}
+}

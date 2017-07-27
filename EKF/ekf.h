@@ -286,6 +286,11 @@ private:
 	float _vel_pos_innov[6] {};	///< NED velocity and position innovations: 0-2 vel (m/sec),  3-5 pos (m**2)
 	float _vel_pos_innov_var[6] {};	///< NED velocity and position innovation variances: 0-2 vel ((m/sec)**2), 3-5 pos (m**2)
 
+	float _del_pos_innov[3] {};	///< XYZ body frame delta position innovations: (m**2)
+	float _del_pos_innov_var[3] {};	///< XYZ body frame delta position innovation variances: (m**2)
+	float _del_pos_test_ratio[3]{};	///< XYZ body frame delta position innovation test ratio
+	uint32_t _del_pos_counter{0};	///< value of obsCounter from the last measurement used
+
 	float _mag_innov[3] {};		///< earth magnetic field innovations (Gauss)
 	float _mag_innov_var[3] {};	///< earth magnetic field innovation variance (Gauss**2)
 
@@ -419,6 +424,9 @@ private:
 
 	// fuse velocity and position measurements (also barometer height)
 	void fuseVelPosHeight();
+
+	// fuse position odometry measurements in the body frame of reference
+	void fuseBodyDelPos();
 
 	// reset velocity states of the ekf
 	bool resetVelocity();

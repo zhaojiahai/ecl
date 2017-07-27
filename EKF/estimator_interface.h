@@ -334,6 +334,7 @@ protected:
 	extVisionSample _ev_sample_delayed{};
 	dragSample _drag_sample_delayed{};
 	dragSample _drag_down_sampled{};	// down sampled drag specific force data (filter prediction rate -> observation rate)
+	bodyDelPosSample _body_del_pos_sample_delayed{};
 
 	// Used by the multi-rotor specific drag force fusion
 	uint8_t _drag_sample_count{0};	// number of drag specific force samples assumulated at the filter prediction rate
@@ -394,6 +395,7 @@ protected:
 	RingBuffer<outputSample> _output_buffer;
 	RingBuffer<outputVert> _output_vert_buffer;
 	RingBuffer<dragSample> _drag_buffer;
+	RingBuffer<bodyDelPosSample> _body_del_pos_buffer;
 
 	uint64_t _time_last_imu{0};	// timestamp of last imu sample in microseconds
 	uint64_t _time_last_gps{0};	// timestamp of last gps measurement in microseconds

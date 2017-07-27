@@ -405,6 +405,8 @@ bool EstimatorInterface::initialise_interface(uint64_t timestamp)
 		_ext_vision_buffer.push(ext_vision_sample_init);
 		dragSample drag_sample_init = {};
 		_drag_buffer.push(drag_sample_init);
+		bodyDelPosSample body_del_pos_sample_init = {};
+		_body_del_pos_buffer.push(body_del_pos_sample_init);
 	}
 
 	// zero the data in the imu data and output observer state buffers
