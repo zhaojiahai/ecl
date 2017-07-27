@@ -145,6 +145,9 @@ void Ekf::fuseDrag()
 //			Kfusion[21] = -SK_ACC[0]*(Kacc*P[21][4]*SH_ACC[0] - Kacc*P[21][22]*SH_ACC[0] + Kacc*P[21][0]*SK_ACC[3] - Kacc*P[21][2]*SK_ACC[2] + Kacc*P[21][3]*SK_ACC[1] + Kacc*P[21][1]*SK_ACC[4] + Kacc*P[21][5]*SK_ACC[6] - Kacc*P[21][6]*SK_ACC[5] - Kacc*P[21][23]*SK_ACC[6]);
 			Kfusion[22] = -SK_ACC[0]*(Kacc*P[22][4]*SH_ACC[0] - Kacc*P[22][22]*SH_ACC[0] + Kacc*P[22][0]*SK_ACC[3] - Kacc*P[22][2]*SK_ACC[2] + Kacc*P[22][3]*SK_ACC[1] + Kacc*P[22][1]*SK_ACC[4] + Kacc*P[22][5]*SK_ACC[6] - Kacc*P[22][6]*SK_ACC[5] - Kacc*P[22][23]*SK_ACC[6]);
 			Kfusion[23] = -SK_ACC[0]*(Kacc*P[23][4]*SH_ACC[0] - Kacc*P[23][22]*SH_ACC[0] + Kacc*P[23][0]*SK_ACC[3] - Kacc*P[23][2]*SK_ACC[2] + Kacc*P[23][3]*SK_ACC[1] + Kacc*P[23][1]*SK_ACC[4] + Kacc*P[23][5]*SK_ACC[6] - Kacc*P[23][6]*SK_ACC[5] - Kacc*P[23][23]*SK_ACC[6]);
+//			Kfusion[24] = -SK_ACC[0]*(Kacc*P[24][4]*SH_ACC[0] - Kacc*P[24][22]*SH_ACC[0] + Kacc*P[24][0]*SK_ACC[3] - Kacc*P[24][2]*SK_ACC[2] + Kacc*P[24][3]*SK_ACC[1] + Kacc*P[24][1]*SK_ACC[4] + Kacc*P[24][5]*SK_ACC[6] - Kacc*P[24][6]*SK_ACC[5] - Kacc*P[24][23]*SK_ACC[6]);
+//			Kfusion[25] = -SK_ACC[0]*(Kacc*P[25][4]*SH_ACC[0] - Kacc*P[25][22]*SH_ACC[0] + Kacc*P[25][0]*SK_ACC[3] - Kacc*P[25][2]*SK_ACC[2] + Kacc*P[25][3]*SK_ACC[1] + Kacc*P[25][1]*SK_ACC[4] + Kacc*P[25][5]*SK_ACC[6] - Kacc*P[25][6]*SK_ACC[5] - Kacc*P[25][23]*SK_ACC[6]);
+//			Kfusion[26] = -SK_ACC[0]*(Kacc*P[26][4]*SH_ACC[0] - Kacc*P[26][22]*SH_ACC[0] + Kacc*P[26][0]*SK_ACC[3] - Kacc*P[26][2]*SK_ACC[2] + Kacc*P[26][3]*SK_ACC[1] + Kacc*P[26][1]*SK_ACC[4] + Kacc*P[26][5]*SK_ACC[6] - Kacc*P[26][6]*SK_ACC[5] - Kacc*P[26][23]*SK_ACC[6]);
 
 			// calculate the predicted acceleration and innovation measured along the X body axis
 			float drag_sign;
@@ -217,6 +220,9 @@ void Ekf::fuseDrag()
 //			Kfusion[21] = -SK_ACC[0]*(Kacc*P[21][0]*SK_ACC[3] + Kacc*P[21][1]*SK_ACC[2] - Kacc*P[21][3]*SK_ACC[1] + Kacc*P[21][2]*SK_ACC[4] - Kacc*P[21][4]*SK_ACC[5] + Kacc*P[21][5]*SK_ACC[8] + Kacc*P[21][6]*SK_ACC[7] + 2*Kacc*P[21][22]*SK_ACC[6] - Kacc*P[21][23]*SK_ACC[8]);
 			Kfusion[22] = -SK_ACC[0]*(Kacc*P[22][0]*SK_ACC[3] + Kacc*P[22][1]*SK_ACC[2] - Kacc*P[22][3]*SK_ACC[1] + Kacc*P[22][2]*SK_ACC[4] - Kacc*P[22][4]*SK_ACC[5] + Kacc*P[22][5]*SK_ACC[8] + Kacc*P[22][6]*SK_ACC[7] + 2*Kacc*P[22][22]*SK_ACC[6] - Kacc*P[22][23]*SK_ACC[8]);
 			Kfusion[23] = -SK_ACC[0]*(Kacc*P[23][0]*SK_ACC[3] + Kacc*P[23][1]*SK_ACC[2] - Kacc*P[23][3]*SK_ACC[1] + Kacc*P[23][2]*SK_ACC[4] - Kacc*P[23][4]*SK_ACC[5] + Kacc*P[23][5]*SK_ACC[8] + Kacc*P[23][6]*SK_ACC[7] + 2*Kacc*P[23][22]*SK_ACC[6] - Kacc*P[23][23]*SK_ACC[8]);
+//			Kfusion[24] = -SK_ACC[0]*(Kacc*P[24][0]*SK_ACC[3] + Kacc*P[24][1]*SK_ACC[2] - Kacc*P[24][3]*SK_ACC[1] + Kacc*P[24][2]*SK_ACC[4] - Kacc*P[24][4]*SK_ACC[5] + Kacc*P[24][5]*SK_ACC[8] + Kacc*P[24][6]*SK_ACC[7] + 2*Kacc*P[24][22]*SK_ACC[6] - Kacc*P[24][23]*SK_ACC[8]);
+//			Kfusion[25] = -SK_ACC[0]*(Kacc*P[25][0]*SK_ACC[3] + Kacc*P[25][1]*SK_ACC[2] - Kacc*P[25][3]*SK_ACC[1] + Kacc*P[25][2]*SK_ACC[4] - Kacc*P[25][4]*SK_ACC[5] + Kacc*P[25][5]*SK_ACC[8] + Kacc*P[25][6]*SK_ACC[7] + 2*Kacc*P[25][22]*SK_ACC[6] - Kacc*P[25][23]*SK_ACC[8]);
+//			Kfusion[26] = -SK_ACC[0]*(Kacc*P[26][0]*SK_ACC[3] + Kacc*P[26][1]*SK_ACC[2] - Kacc*P[26][3]*SK_ACC[1] + Kacc*P[26][2]*SK_ACC[4] - Kacc*P[26][4]*SK_ACC[5] + Kacc*P[26][5]*SK_ACC[8] + Kacc*P[26][6]*SK_ACC[7] + 2*Kacc*P[26][22]*SK_ACC[6] - Kacc*P[26][23]*SK_ACC[8]);
 
 			// calculate the predicted acceleration and innovation measured along the Y body axis
 			float drag_sign;
