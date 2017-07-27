@@ -149,9 +149,6 @@ void Ekf::predictCovariance()
 
 	float dt = math::constrain(_imu_sample_delayed.delta_ang_dt, 0.0005f * FILTER_UPDATE_PERIOD_MS, 0.002f * FILTER_UPDATE_PERIOD_MS);
 
-	// compute noise variance for stationary processes
-	float process_noise[_k_num_states] = {};
-
 	// convert rate of change of rate gyro bias (rad/s**2) as specified by the parameter to an expected change in delta angle (rad) since the last update
 	float d_ang_bias_sig = dt * dt * math::constrain(_params.gyro_bias_p_noise, 0.0f, 1.0f);
 
@@ -214,25 +211,6 @@ void Ekf::predictCovariance()
 	} else {
 		wind_vel_sig = 0.0f;
 	}
-
-	// Construct the process noise variance diagonal for those states with a stationary process model
-	// These are kinematic states and their error growth is controlled separately by the IMU noise variances
-	for (unsigned i = 0; i <= 9; i++) {
-		process_noise[i] = 0.0f;
-	}
-	for (unsigned i = 24; i <= 26; i++) {
-		process_noise[i] = 0.0f;
-	}
-	// delta angle bias states
-	process_noise[12] = process_noise[11] = process_noise[10] = sq(d_ang_bias_sig);
-	// delta_velocity bias states
-	process_noise[15] = process_noise[14] = process_noise[13] = sq(d_vel_bias_sig);
-	// earth frame magnetic field states
-	process_noise[18] = process_noise[17] = process_noise[16] = sq(mag_I_sig);
-	// body frame magnetic field states
-	process_noise[21] = process_noise[20] = process_noise[19] = sq(mag_B_sig);
-	// wind velocity states
-	process_noise[23] = process_noise[22] = sq(wind_vel_sig);
 
 	// assign IMU noise variances
 	// inputs to the system are 3 delta angles and 3 delta velocities
@@ -404,7 +382,7 @@ void Ekf::predictCovariance()
 
 	// add process noise that is not from the IMU
 	for (unsigned i = 0; i <= 12; i++) {
-		nextP[i][i] += process_noise[i];
+		nextP[i][i] += sq(d_ang_bias_sig);
 	}
 
 	// Don't calculate these covariance terms if IMU delta velocity bias estimation is inhibited
@@ -459,7 +437,7 @@ void Ekf::predictCovariance()
 
 		// add process noise that is not from the IMU
 		for (unsigned i = 13; i <= 15; i++) {
-			nextP[i][i] += process_noise[i];
+			nextP[i][i] += sq(d_vel_bias_sig);
 		}
 
 	} else {
@@ -590,8 +568,11 @@ void Ekf::predictCovariance()
 		nextP[21][21] = P[21][21];
 
 		// add process noise that is not from the IMU
-		for (unsigned i = 16; i <= 21; i++) {
-			nextP[i][i] += process_noise[i];
+		for (unsigned i = 16; i <= 18; i++) {
+			nextP[i][i] += sq(mag_I_sig);
+		}
+		for (unsigned i = 19; i <= 21; i++) {
+			nextP[i][i] += sq(mag_B_sig);
 		}
 
 	}
@@ -650,7 +631,7 @@ void Ekf::predictCovariance()
 
 		// add process noise that is not from the IMU
 		for (unsigned i = 22; i <= 23; i++) {
-			nextP[i][i] += process_noise[i];
+			nextP[i][i] += sq(wind_vel_sig);
 		}
 
 	}
