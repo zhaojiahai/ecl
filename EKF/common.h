@@ -330,7 +330,7 @@ struct stateSample {
 	Vector3f    mag_I;	///< NED earth magnetic field in gauss
 	Vector3f    mag_B;	///< magnetometer bias estimate in body frame in gauss
 	Vector2f    wind_vel;	///< wind velocity in m/s
-	Vector3f    body_vel;	///> velocity in the body frame of reference
+	Vector3f    dpos_body;	///> delta position in the body frame of reference (m)
 };
 
 union fault_status_u {
