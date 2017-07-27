@@ -107,6 +107,9 @@ void Ekf::fuseAirspeed()
 			for (unsigned row = 0; row <= 21; row++) {
 				Kfusion[row] = 0.0f;
 			}
+			for (unsigned row = 24; row <= 26; row++) {
+				Kfusion[row] = 0.0f;
+			}
 		} else {
 			// we have no other source of aiding, so use airspeed measurements to correct states
 			Kfusion[0] = SK_TAS[0]*(P[0][4]*SH_TAS[2] - P[0][22]*SH_TAS[2] + P[0][5]*SK_TAS[1] - P[0][23]*SK_TAS[1] + P[0][6]*vd*SH_TAS[0]);
@@ -131,6 +134,15 @@ void Ekf::fuseAirspeed()
 			Kfusion[19] = SK_TAS[0]*(P[19][4]*SH_TAS[2] - P[19][22]*SH_TAS[2] + P[19][5]*SK_TAS[1] - P[19][23]*SK_TAS[1] + P[19][6]*vd*SH_TAS[0]);
 			Kfusion[20] = SK_TAS[0]*(P[20][4]*SH_TAS[2] - P[20][22]*SH_TAS[2] + P[20][5]*SK_TAS[1] - P[20][23]*SK_TAS[1] + P[20][6]*vd*SH_TAS[0]);
 			Kfusion[21] = SK_TAS[0]*(P[21][4]*SH_TAS[2] - P[21][22]*SH_TAS[2] + P[21][5]*SK_TAS[1] - P[21][23]*SK_TAS[1] + P[21][6]*vd*SH_TAS[0]);
+
+			// Only update delta position states if doing body frame odometry fusion
+			if (_control_status.flags.dpos_body) {
+				Kfusion[24] = SK_TAS[0]*(P[24][4]*SH_TAS[2] - P[24][22]*SH_TAS[2] + P[24][5]*SK_TAS[1] - P[24][23]*SK_TAS[1] + P[24][6]*vd*SH_TAS[0]);
+				Kfusion[25] = SK_TAS[0]*(P[25][4]*SH_TAS[2] - P[25][22]*SH_TAS[2] + P[25][5]*SK_TAS[1] - P[25][23]*SK_TAS[1] + P[25][6]*vd*SH_TAS[0]);
+				Kfusion[26] = SK_TAS[0]*(P[26][4]*SH_TAS[2] - P[26][22]*SH_TAS[2] + P[26][5]*SK_TAS[1] - P[26][23]*SK_TAS[1] + P[26][6]*vd*SH_TAS[0]);
+			} else {
+				Kfusion[26] = Kfusion[25] = Kfusion[24] = 0.0f;
+			}
 		}
 		Kfusion[22] = SK_TAS[0]*(P[22][4]*SH_TAS[2] - P[22][22]*SH_TAS[2] + P[22][5]*SK_TAS[1] - P[22][23]*SK_TAS[1] + P[22][6]*vd*SH_TAS[0]);
 		Kfusion[23] = SK_TAS[0]*(P[23][4]*SH_TAS[2] - P[23][22]*SH_TAS[2] + P[23][5]*SK_TAS[1] - P[23][23]*SK_TAS[1] + P[23][6]*vd*SH_TAS[0]);
