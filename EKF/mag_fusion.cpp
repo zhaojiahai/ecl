@@ -206,12 +206,23 @@ void Ekf::fuseMag()
 				Kfusion[15] = SK_MX[0]*(P[15][19] + P[15][1]*SH_MAG[0] - P[15][2]*SH_MAG[1] + P[15][3]*SH_MAG[2] + P[15][0]*SK_MX[2] - P[15][16]*SK_MX[1] + P[15][17]*SK_MX[4] - P[15][18]*SK_MX[3]);
 				Kfusion[22] = SK_MX[0]*(P[22][19] + P[22][1]*SH_MAG[0] - P[22][2]*SH_MAG[1] + P[22][3]*SH_MAG[2] + P[22][0]*SK_MX[2] - P[22][16]*SK_MX[1] + P[22][17]*SK_MX[4] - P[22][18]*SK_MX[3]);
 				Kfusion[23] = SK_MX[0]*(P[23][19] + P[23][1]*SH_MAG[0] - P[23][2]*SH_MAG[1] + P[23][3]*SH_MAG[2] + P[23][0]*SK_MX[2] - P[23][16]*SK_MX[1] + P[23][17]*SK_MX[4] - P[23][18]*SK_MX[3]);
+
+				// Only update delta position states if doing body frame odometry fusion
+				if (_control_status.flags.dpos_body) {
+					Kfusion[24] = SK_MX[0]*(P[24][19] + P[24][1]*SH_MAG[0] - P[24][2]*SH_MAG[1] + P[24][3]*SH_MAG[2] + P[24][0]*SK_MX[2] - P[24][16]*SK_MX[1] + P[24][17]*SK_MX[4] - P[24][18]*SK_MX[3]);
+					Kfusion[25] = SK_MX[0]*(P[25][19] + P[25][1]*SH_MAG[0] - P[25][2]*SH_MAG[1] + P[25][3]*SH_MAG[2] + P[25][0]*SK_MX[2] - P[25][16]*SK_MX[1] + P[25][17]*SK_MX[4] - P[25][18]*SK_MX[3]);
+					Kfusion[26] = SK_MX[0]*(P[26][19] + P[26][1]*SH_MAG[0] - P[26][2]*SH_MAG[1] + P[26][3]*SH_MAG[2] + P[26][0]*SK_MX[2] - P[26][16]*SK_MX[1] + P[26][17]*SK_MX[4] - P[26][18]*SK_MX[3]);
+				} else {
+					Kfusion[26] = Kfusion[25] = Kfusion[24] = 0.0f;
+				}
+
 			} else {
 				for (uint8_t i=0; i<16; i++) {
 					Kfusion[i] = 0.0f;
 				}
-				Kfusion[22] = 0.0f;
-				Kfusion[23] = 0.0f;
+				for (uint8_t i=22; i<27; i++) {
+					Kfusion[i] = 0.0f;
+				}
 			}
 
 			Kfusion[16] = SK_MX[0]*(P[16][19] + P[16][1]*SH_MAG[0] - P[16][2]*SH_MAG[1] + P[16][3]*SH_MAG[2] + P[16][0]*SK_MX[2] - P[16][16]*SK_MX[1] + P[16][17]*SK_MX[4] - P[16][18]*SK_MX[3]);
@@ -260,12 +271,23 @@ void Ekf::fuseMag()
 				Kfusion[15] = SK_MY[0]*(P[15][20] + P[15][0]*SH_MAG[2] + P[15][1]*SH_MAG[1] + P[15][2]*SH_MAG[0] - P[15][3]*SK_MY[2] - P[15][17]*SK_MY[1] - P[15][16]*SK_MY[3] + P[15][18]*SK_MY[4]);
 				Kfusion[22] = SK_MY[0]*(P[22][20] + P[22][0]*SH_MAG[2] + P[22][1]*SH_MAG[1] + P[22][2]*SH_MAG[0] - P[22][3]*SK_MY[2] - P[22][17]*SK_MY[1] - P[22][16]*SK_MY[3] + P[22][18]*SK_MY[4]);
 				Kfusion[23] = SK_MY[0]*(P[23][20] + P[23][0]*SH_MAG[2] + P[23][1]*SH_MAG[1] + P[23][2]*SH_MAG[0] - P[23][3]*SK_MY[2] - P[23][17]*SK_MY[1] - P[23][16]*SK_MY[3] + P[23][18]*SK_MY[4]);
+
+				// Only update delta position states if doing body frame odometry fusion
+				if (_control_status.flags.dpos_body) {
+					Kfusion[24] = SK_MY[0]*(P[24][20] + P[24][0]*SH_MAG[2] + P[24][1]*SH_MAG[1] + P[24][2]*SH_MAG[0] - P[24][3]*SK_MY[2] - P[24][17]*SK_MY[1] - P[24][16]*SK_MY[3] + P[24][18]*SK_MY[4]);
+					Kfusion[25] = SK_MY[0]*(P[25][20] + P[25][0]*SH_MAG[2] + P[25][1]*SH_MAG[1] + P[25][2]*SH_MAG[0] - P[25][3]*SK_MY[2] - P[25][17]*SK_MY[1] - P[25][16]*SK_MY[3] + P[25][18]*SK_MY[4]);
+					Kfusion[26] = SK_MY[0]*(P[26][20] + P[26][0]*SH_MAG[2] + P[26][1]*SH_MAG[1] + P[26][2]*SH_MAG[0] - P[26][3]*SK_MY[2] - P[26][17]*SK_MY[1] - P[26][16]*SK_MY[3] + P[26][18]*SK_MY[4]);
+				} else {
+					Kfusion[26] = Kfusion[25] = Kfusion[24] = 0.0f;
+				}
+
 			} else {
 				for (uint8_t i=0; i<16; i++) {
 					Kfusion[i] = 0.0f;
 				}
-				Kfusion[22] = 0.0f;
-				Kfusion[23] = 0.0f;
+				for (uint8_t i=22; i<27; i++) {
+					Kfusion[i] = 0.0f;
+				}
 			}
 
 			Kfusion[16] = SK_MY[0]*(P[16][20] + P[16][0]*SH_MAG[2] + P[16][1]*SH_MAG[1] + P[16][2]*SH_MAG[0] - P[16][3]*SK_MY[2] - P[16][17]*SK_MY[1] - P[16][16]*SK_MY[3] + P[16][18]*SK_MY[4]);
@@ -314,12 +336,23 @@ void Ekf::fuseMag()
 				Kfusion[15] = SK_MZ[0]*(P[15][21] + P[15][0]*SH_MAG[1] - P[15][1]*SH_MAG[2] + P[15][3]*SH_MAG[0] + P[15][2]*SK_MZ[2] + P[15][18]*SK_MZ[1] + P[15][16]*SK_MZ[4] - P[15][17]*SK_MZ[3]);
 				Kfusion[22] = SK_MZ[0]*(P[22][21] + P[22][0]*SH_MAG[1] - P[22][1]*SH_MAG[2] + P[22][3]*SH_MAG[0] + P[22][2]*SK_MZ[2] + P[22][18]*SK_MZ[1] + P[22][16]*SK_MZ[4] - P[22][17]*SK_MZ[3]);
 				Kfusion[23] = SK_MZ[0]*(P[23][21] + P[23][0]*SH_MAG[1] - P[23][1]*SH_MAG[2] + P[23][3]*SH_MAG[0] + P[23][2]*SK_MZ[2] + P[23][18]*SK_MZ[1] + P[23][16]*SK_MZ[4] - P[23][17]*SK_MZ[3]);
+
+				// Only update delta position states if doing body frame odometry fusion
+				if (_control_status.flags.dpos_body) {
+					Kfusion[24] = SK_MZ[0]*(P[24][21] + P[24][0]*SH_MAG[1] - P[24][1]*SH_MAG[2] + P[24][3]*SH_MAG[0] + P[24][2]*SK_MZ[2] + P[24][18]*SK_MZ[1] + P[24][16]*SK_MZ[4] - P[24][17]*SK_MZ[3]);
+					Kfusion[25] = SK_MZ[0]*(P[25][21] + P[25][0]*SH_MAG[1] - P[25][1]*SH_MAG[2] + P[25][3]*SH_MAG[0] + P[25][2]*SK_MZ[2] + P[25][18]*SK_MZ[1] + P[25][16]*SK_MZ[4] - P[25][17]*SK_MZ[3]);
+					Kfusion[26] = SK_MZ[0]*(P[26][21] + P[26][0]*SH_MAG[1] - P[26][1]*SH_MAG[2] + P[26][3]*SH_MAG[0] + P[26][2]*SK_MZ[2] + P[26][18]*SK_MZ[1] + P[26][16]*SK_MZ[4] - P[26][17]*SK_MZ[3]);
+				} else {
+					Kfusion[26] = Kfusion[25] = Kfusion[24] = 0.0f;
+				}
+
 			} else {
 				for (uint8_t i=0; i<16; i++) {
 					Kfusion[i] = 0.0f;
 				}
-				Kfusion[22] = 0.0f;
-				Kfusion[23] = 0.0f;
+				for (uint8_t i=22; i<27; i++) {
+					Kfusion[i] = 0.0f;
+				}
 			}
 
 			Kfusion[16] = SK_MZ[0]*(P[16][21] + P[16][0]*SH_MAG[1] - P[16][1]*SH_MAG[2] + P[16][3]*SH_MAG[0] + P[16][2]*SK_MZ[2] + P[16][18]*SK_MZ[1] + P[16][16]*SK_MZ[4] - P[16][17]*SK_MZ[3]);
@@ -810,6 +843,15 @@ void Ekf::fuseDeclination()
 	Kfusion[21] = -t4*t13*(P[21][16]*magE-P[21][17]*magN);
 	Kfusion[22] = -t4*t13*(P[22][16]*magE-P[22][17]*magN);
 	Kfusion[23] = -t4*t13*(P[23][16]*magE-P[23][17]*magN);
+
+	// Only update delta position states if doing body frame odometry fusion
+	if (_control_status.flags.dpos_body) {
+		Kfusion[24] = -t4*t13*(P[24][16]*magE-P[24][17]*magN);
+		Kfusion[25] = -t4*t13*(P[25][16]*magE-P[25][17]*magN);
+		Kfusion[26] = -t4*t13*(P[26][16]*magE-P[26][17]*magN);
+	} else {
+		Kfusion[26] = Kfusion[25] = Kfusion[24] = 0.0f;
+	}
 
 	// calculate innovation and constrain
 	float innovation = atan2f(magE , magN) - _mag_declination;
