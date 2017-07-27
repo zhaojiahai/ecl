@@ -757,7 +757,7 @@ void Ekf::fixCovarianceErrors()
 	// and set corresponding entries in Q to zero when states exceed 50% of the limit
 	// Covariance diagonal limits. Use same values for states which
 	// belong to the same group (e.g. vel_x, vel_y, vel_z)
-	float P_lim[8] = {};
+	float P_lim[9] = {};
 	P_lim[0] = 1.0f;		// quaternion max var
 	P_lim[1] = 1e6f;		// velocity max var
 	P_lim[2] = 1e6f;		// positiion max var
@@ -766,6 +766,7 @@ void Ekf::fixCovarianceErrors()
 	P_lim[5] = 1.0f;		// earth mag field max var
 	P_lim[6] = 1.0f;		// body mag field max var
 	P_lim[7] = 1e6f;		// wind max var
+	P_lim[8] = 1e4f;		// incremental body position var
 
 	for (int i = 0; i <= 3; i++) {
 		// quaternion states
@@ -903,6 +904,19 @@ void Ekf::fixCovarianceErrors()
 		}
 		// force symmetry
 		makeSymmetrical(P,22,23);
+	}
+
+	// incremental body frame position states
+	if (!_control_status.flags.dpos_body) {
+		zeroRows(P,24,26);
+		zeroCols(P,24,26);
+	} else {
+		// constrain variances
+		for (int i = 24; i <= 26; i++) {
+			P[i][i] = math::constrain(P[i][i], 0.0f, P_lim[8]);
+		}
+		// force symmetry
+		makeSymmetrical(P,24,26);
 	}
 }
 
