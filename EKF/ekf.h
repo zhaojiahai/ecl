@@ -270,7 +270,7 @@ private:
 
 	Vector3f _earth_rate_NED;	///< earth rotation vector (NED) in rad/s
 
-	Dcmf _R_to_earth;	///< transformation matrix from body frame to earth frame from last EKF predition
+	Dcmf _R_to_earth;	///< transformation matrix from body frame to earth frame after state prediction
 
 	// used by magnetometer fusion mode selection
 	Vector2f _accel_lpf_NE;			///< Low pass filtered horizontal earth frame acceleration (m/sec**2)

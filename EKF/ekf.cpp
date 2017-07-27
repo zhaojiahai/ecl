@@ -353,6 +353,7 @@ void Ekf::predictState()
 	Vector3f vel_last = _state.vel;
 
 	// update transformation matrix from body to world frame
+	Dcmf R_to_earth_prev = _R_to_earth;
 	_R_to_earth = quat_to_invrotmat(_state.quat_nominal);
 
 	// Calculate an earth frame delta velocity
@@ -381,6 +382,17 @@ void Ekf::predictState()
 	// filter and limit input between -50% and +100% of nominal value
 	input = math::constrain(input, 0.0005f * (float)(FILTER_UPDATE_PERIOD_MS), 0.002f * (float)(FILTER_UPDATE_PERIOD_MS));
 	_dt_ekf_avg = 0.99f * _dt_ekf_avg + 0.01f * input;
+
+	if (_control_status.flags.dpos_body) {
+		// Calculate the average body frame velocity across the measurement interval
+		// (assumes constant acceleration)
+		Vector3f bodyVelAvg = 0.5f * (R_to_earth_prev.transpose() * vel_last + _R_to_earth.transpose() * _state.vel);
+
+		// Integrate body frame velocities to get position increment measured by the sensor
+		// These will be reset to zero after each odometry measurement
+		_state.dpos_body += _imu_sample_delayed.delta_vel_dt * bodyVelAvg;
+
+	}
 }
 
 bool Ekf::collect_imu(imuSample &imu)
