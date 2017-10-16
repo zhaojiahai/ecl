@@ -31,34 +31,43 @@
 #
 ############################################################################
 
-px4_add_module(
-	MODULE lib__ecl
-	STACK_MAIN 6000
-	STACK_MAX 6000
-	COMPILE_FLAGS
-	SRCS
-		attitude_fw/ecl_controller.cpp
-		attitude_fw/ecl_pitch_controller.cpp
-		attitude_fw/ecl_roll_controller.cpp
-		attitude_fw/ecl_wheel_controller.cpp
-		attitude_fw/ecl_yaw_controller.cpp
-		EKF/airspeed_fusion.cpp
-		EKF/control.cpp
-		EKF/covariance.cpp
-		EKF/ekf.cpp
-		EKF/ekf_helper.cpp
-		EKF/estimator_interface.cpp
-		EKF/gps_checks.cpp
-		EKF/mag_fusion.cpp
-		EKF/optflow_fusion.cpp
-		EKF/sideslip_fusion.cpp
-		EKF/terrain_estimator.cpp
-		EKF/vel_pos_fusion.cpp
-		EKF/drag_fusion.cpp
-		l1/ecl_l1_pos_controller.cpp
-		validation/data_validator.cpp
-		validation/data_validator_group.cpp
-	DEPENDS
-		platforms__common
+# attitude_fw
+add_library(ecl_attitude_fw EXCLUDE_FROM_ALL
+	attitude_fw/ecl_controller.cpp
+	attitude_fw/ecl_pitch_controller.cpp
+	attitude_fw/ecl_roll_controller.cpp
+	attitude_fw/ecl_wheel_controller.cpp
+	attitude_fw/ecl_yaw_controller.cpp
 	)
-# vim: set noet ft=cmake fenc=utf-8 ff=unix :
+target_include_directories(ecl_attitude_fw PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/attitude_fw)
+
+# EKF
+add_library(ecl_ekf EXCLUDE_FROM_ALL
+	EKF/airspeed_fusion.cpp
+	EKF/control.cpp
+	EKF/covariance.cpp
+	EKF/ekf.cpp
+	EKF/ekf_helper.cpp
+	EKF/estimator_interface.cpp
+	EKF/gps_checks.cpp
+	EKF/mag_fusion.cpp
+	EKF/optflow_fusion.cpp
+	EKF/sideslip_fusion.cpp
+	EKF/terrain_estimator.cpp
+	EKF/vel_pos_fusion.cpp
+	EKF/drag_fusion.cpp	
+	)
+target_include_directories(ecl_ekf PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/EKF)
+
+# L1
+add_library(ecl_l1 EXCLUDE_FROM_ALL
+	l1/ecl_l1_pos_controller.cpp
+	)
+target_include_directories(ecl_l1 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/l1)
+
+# Validation
+add_library(ecl_validation EXCLUDE_FROM_ALL
+	validation/data_validator.cpp
+	validation/data_validator_group.cpp
+	)
+target_include_directories(ecl_l1 PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/validation)
