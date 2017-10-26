@@ -808,6 +808,13 @@ void Ekf::fixCovarianceErrors()
 			_time_acc_bias_check = _time_last_imu;
 			_fault_status.flags.bad_acc_bias = false;
 			ECL_WARN("EKF invalid accel bias - resetting covariance");
+			if (!_control_status.flags.in_air) {
+				// if on ground, also reset the bias states and state variances
+				_state.accel_bias.zero();
+				_prev_dvel_bias_var(0) = P[13][13] = sq(_params.switch_on_accel_bias * _dt_ekf_avg);
+				_prev_dvel_bias_var(1) = P[14][14] = P[13][13];
+				_prev_dvel_bias_var(2) = P[15][15] = P[13][13];
+			}
 		} else {
 			// ensure the covariance values are symmetrical
 			makeSymmetrical(P,13,15);
